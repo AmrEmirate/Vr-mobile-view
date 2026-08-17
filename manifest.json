@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "VR Mobile Side - Instant SBS Cinema",
+  "version": "1.2.0",
+  "description": "Universal Instant Side-by-Side (SBS) VR Duplication for ANY website, video player, cinema21, and streaming sites with IPD, Zoom, Curved IMAX, and Gyroscope tracking.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "contextMenus"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "VR Mobile Side (Universal SBS)",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true,
+      "match_about_blank": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["content.css", "icons/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "commands": {
+    "toggle-vr-sbs": {
+      "suggested_key": {
+        "default": "Alt+V"
+      },
+      "description": "Toggle VR Mobile Side SBS Mode"
+    }
+  }
+}

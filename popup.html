@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VR Mobile Side - SBS Cinema</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon-wrapper">
+          <svg class="brand-icon" viewBox="0 0 24 24">
+            <path d="M21 7H3a2 2 0 00-2 2v6a2 2 0 002 2h4.5a2.5 2.5 0 002.5-2.5V14a1 1 0 011-1h2a1 1 0 011 1v.5a2.5 2.5 0 002.5 2.5H21a2 2 0 002-2V9a2 2 0 00-2-2zm-14 6a2 2 0 110-4 2 2 0 010 4zm10 0a2 2 0 110-4 2 2 0 010 4z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="title">VR Mobile Side</h1>
+          <p class="subtitle">Universal Instant SBS Cinema</p>
+        </div>
+      </div>
+      <div class="status-indicator" id="status-badge">
+        <span class="status-dot"></span>
+        <span id="status-text">OFF</span>
+      </div>
+    </header>
+
+    <!-- Main Toggle Action Button -->
+    <section class="section-toggle">
+      <button class="btn-main-toggle" id="btn-toggle-vr">
+        <span class="toggle-icon">🥽</span>
+        <span id="btn-toggle-text">Masuk Mode VR (SBS)</span>
+      </button>
+    </section>
+
+    <!-- Mode Selector: Universal Web vs Focused Media -->
+    <section class="section-mode">
+      <label class="section-label">Mode Duplikasi</label>
+      <div class="mode-chips">
+        <button class="chip active" id="btn-mode-fullweb" data-mode="fullweb">🌐 Seluruh Web (Universal)</button>
+        <button class="chip" id="btn-mode-media" data-mode="media">🎬 Fokus Video (Bioskop)</button>
+      </div>
+    </section>
+
+    <!-- Cinema Presets -->
+    <section class="section-presets">
+      <label class="section-label">Preset Cepat Bioskop</label>
+      <div class="preset-grid">
+        <button class="btn-preset active" data-preset="standard">
+          <span class="preset-name">Standard</span>
+          <span class="preset-desc">Kursi Tengah</span>
+        </button>
+        <button class="btn-preset" data-preset="imax">
+          <span class="preset-name">IMAX 3D</span>
+          <span class="preset-desc">Curved Screen</span>
+        </button>
+        <button class="btn-preset" data-preset="bedtime">
+          <span class="preset-name">Bedtime</span>
+          <span class="preset-desc">Redup & Static</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Calibration Sliders -->
+    <section class="section-controls">
+      <!-- Screen Distance / Zoom -->
+      <div class="control-group">
+        <div class="control-header">
+          <span class="control-title">Jarak Layar (Zoom)</span>
+          <span class="control-val" id="disp-zoom">100%</span>
+        </div>
+        <input type="range" class="range-slider" id="slider-zoom" min="50" max="150" value="100" step="5">
+      </div>
+
+      <!-- IPD Offset -->
+      <div class="control-group">
+        <div class="control-header">
+          <span class="control-title">Penyesuaian IPD (Jarak Pupil)</span>
+          <span class="control-val" id="disp-ipd">0 px</span>
+        </div>
+        <input type="range" class="range-slider" id="slider-ipd" min="-40" max="40" value="0" step="2">
+      </div>
+
+      <!-- Brightness Dimmer -->
+      <div class="control-group">
+        <div class="control-header">
+          <span class="control-title">Kecerahan Layar (Dimmer)</span>
+          <span class="control-val" id="disp-brightness">100%</span>
+        </div>
+        <input type="range" class="range-slider" id="slider-brightness" min="10" max="100" value="100" step="5">
+      </div>
+
+      <!-- Aspect Ratio Selection -->
+      <div class="control-group">
+        <div class="control-header">
+          <span class="control-title">Kunci Rasio Aspek</span>
+        </div>
+        <div class="aspect-chips" id="aspect-chips">
+          <button class="chip active" data-aspect="16/9">16:9 (Standar)</button>
+          <button class="chip" data-aspect="21/9">21:9 (Bioskop)</button>
+          <button class="chip" data-aspect="4/3">4:3</button>
+          <button class="chip" data-aspect="auto">Auto</button>
+        </div>
+      </div>
+
+      <!-- Toggle Switches (Curved & Gyro) -->
+      <div class="switch-row">
+        <div class="switch-item">
+          <div>
+            <div class="switch-title">Curved IMAX</div>
+            <div class="switch-sub">Layar Bioskop Melengkung</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="check-curved">
+            <span class="slider-round"></span>
+          </label>
+        </div>
+
+        <div class="switch-item">
+          <div>
+            <div class="switch-title">Pelacak Kepala (Gyro)</div>
+            <div class="switch-sub">Rotasi Ruang Virtual 3D</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="check-gyro">
+            <span class="slider-round"></span>
+          </label>
+        </div>
+
+        <!-- Gyro Type Selection Chips (Visible when Gyro is ON) -->
+        <div class="control-group" id="group-gyro-type" style="display: none; padding-top: 6px;">
+          <div class="control-header">
+            <span class="control-title">Tipe Mode Gyro</span>
+          </div>
+          <div class="aspect-chips gyro-chips" id="gyro-chips" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+            <button class="chip active" data-gyro="immersive_360">🌐 360° Bioskop</button>
+            <button class="chip" data-gyro="lazy_follow">🛏️ Follow Rebahan</button>
+            <button class="chip" data-gyro="parallax_3d">✨ 3D Parallax</button>
+            <button class="chip" data-gyro="yaw_only">↔️ Horizontal</button>
+          </div>
+        </div>
+
+        <!-- Gyro Sensitivity Slider (Visible when Gyro is ON) -->
+        <div class="control-group" id="group-gyro-sens" style="display: none; padding-top: 4px;">
+          <div class="control-header">
+            <span class="control-title">Sensitivitas Gyro</span>
+            <span class="control-val" id="disp-gyro-sens">1.0x</span>
+          </div>
+          <input type="range" class="range-slider" id="slider-gyro-sens" min="3" max="20" value="10" step="1">
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Actions & Guide -->
+    <footer class="footer">
+      <button class="btn-secondary" id="btn-reset">↺ Reset Setelan</button>
+      <div class="guide-note">
+        💡 <em>Bekerja universal di Cinema21, streaming film, YouTube, dan web apa pun. Masukkan HP ke VR Box / Cardboard.</em>
+      </div>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

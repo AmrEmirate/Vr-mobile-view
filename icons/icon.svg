@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="vrGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <rect width="128" height="128" rx="28" fill="#0b0f19"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="#1e293b" stroke-width="2"/>
+  
+  <!-- VR Headset Body -->
+  <path d="M 20 44 C 20 36 26 32 36 32 L 92 32 C 102 32 108 36 108 44 L 108 78 C 108 86 102 92 90 92 L 78 92 C 74 92 71 86 64 86 C 57 86 54 92 50 92 L 38 92 C 26 92 20 86 20 78 Z" fill="url(#vrGrad)" />
+  
+  <!-- Headset Strap Mounts -->
+  <rect x="14" y="52" width="8" height="18" rx="3" fill="#38bdf8" opacity="0.8"/>
+  <rect x="106" y="52" width="8" height="18" rx="3" fill="#38bdf8" opacity="0.8"/>
+  
+  <!-- Left Eye Lens -->
+  <circle cx="44" cy="58" r="16" fill="#090d16" stroke="#38bdf8" stroke-width="3"/>
+  <circle cx="44" cy="58" r="11" fill="url(#lensGrad)" opacity="0.85"/>
+  <circle cx="40" cy="54" r="3.5" fill="#ffffff" opacity="0.8"/>
+  
+  <!-- Center Divider Notch -->
+  <line x1="64" y1="36" x2="64" y2="76" stroke="#090d16" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Right Eye Lens -->
+  <circle cx="84" cy="58" r="16" fill="#090d16" stroke="#38bdf8" stroke-width="3"/>
+  <circle cx="84" cy="58" r="11" fill="url(#lensGrad)" opacity="0.85"/>
+  <circle cx="80" cy="54" r="3.5" fill="#ffffff" opacity="0.8"/>
+</svg>

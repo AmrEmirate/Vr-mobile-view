@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VR Mobile Side - Test & Demo Player</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #0b0f19;
+      color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: #0f172a;
+      border-bottom: 1px solid #1e293b;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      fill: #38bdf8;
+    }
+    .brand h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+    .brand p {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    .main-content {
+      max-width: 900px;
+      width: 100%;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .video-card {
+      background: #1e293b;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #334155;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+    video, canvas {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      display: block;
+      background: #000;
+      object-fit: cover;
+    }
+    .player-controls {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: #0f172a;
+      border-top: 1px solid #1e293b;
+    }
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    button {
+      background: #0284c7;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    button:hover {
+      background: #0369a1;
+    }
+    button:active {
+      transform: scale(0.96);
+    }
+    button.secondary {
+      background: #334155;
+      color: #cbd5e1;
+    }
+    button.secondary:hover {
+      background: #475569;
+    }
+    .instructions-card {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .instructions-card h3 {
+      font-size: 15px;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .steps-list {
+      list-style-position: inside;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+    .steps-list li strong {
+      color: #f8fafc;
+    }
+    .keyboard-badge {
+      background: #334155;
+      border: 1px solid #475569;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 11px;
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <svg class="brand-logo" viewBox="0 0 24 24"><path d="M21 7H3a2 2 0 00-2 2v6a2 2 0 002 2h4.5a2.5 2.5 0 002.5-2.5V14a1 1 0 011-1h2a1 1 0 011 1v.5a2.5 2.5 0 002.5 2.5H21a2 2 0 002-2V9a2 2 0 00-2-2zm-14 6a2 2 0 110-4 2 2 0 010 4zm10 0a2 2 0 110-4 2 2 0 010 4z"/></svg>
+      <div>
+        <h1>VR Mobile Side Test Station</h1>
+        <p>Halaman Uji Coba Pemutar Video & Fitur SBS VR</p>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button id="btn-manual-toggle">🥽 Toggle VR (Alt+V)</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="video-card">
+      <canvas id="cinema-canvas" width="1280" height="720"></canvas>
+      <div class="player-controls">
+        <div class="btn-group">
+          <button id="btn-play-pause">▶ Play / Pause</button>
+          <button class="secondary" id="btn-change-scene">🎬 Ganti Adegan</button>
+        </div>
+        <div class="btn-group">
+          <button class="secondary" id="btn-fullscreen">⛶ Fullscreen</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="instructions-card">
+      <h3>🚀 Panduan Uji Coba Ekstensi</h3>
+      <ol class="steps-list">
+        <li><strong>Instal Ekstensi:</strong> Buka menu Extensions di browser (Kiwi / Lemur / Chrome / Edge), aktifkan <em>Developer Mode</em>, lalu pilih <em>Load Unpacked</em> dan arahkan ke folder ini.</li>
+        <li><strong>Aktifkan Mode VR:</strong> Tekan ikon ekstensi <strong>VR Mobile Side</strong> di toolbar, atau gunakan tombol <span class="keyboard-badge">Alt + V</span>.</li>
+        <li><strong>Kalibrasi Layar (Control HUD):</strong> Sesuaikan <strong>Zoom</strong>, <strong>IPD</strong>, <strong>Kecerahan</strong>, atau aktifkan mode <strong>Curved IMAX</strong> & <strong>Gyroscope</strong>.</li>
+        <li><strong>Siap Tonton:</strong> Pasang HP ke dalam headset VR Box / Google Cardboard dan nikmati bioskop virtual pribadi Anda.</li>
+      </ol>
+    </div>
+  </main>
+
+  <script>
+    // Canvas Cinema Generator for standalone testing without external mp4 network dependency
+    const canvas = document.getElementById("cinema-canvas");
+    const ctx = canvas.getContext("2d");
+    let isPlaying = true;
+    let scene = 0;
+    let frame = 0;
+
+    const stars = Array.from({ length: 80 }, () => ({
+      x: Math.random() * 1280,
+      y: Math.random() * 720,
+      speed: 0.5 + Math.random() * 2,
+      r: 1 + Math.random() * 2.5
+    }));
+
+    function drawScene() {
+      if (!isPlaying) {
+        requestAnimationFrame(drawScene);
+        return;
+      }
+      frame++;
+
+      // Scene 0: Sci-Fi Space Warp Cinema
+      if (scene === 0) {
+        ctx.fillStyle = "#030712";
+        ctx.fillRect(0, 0, 1280, 720);
+
+        // Moving Stars
+        ctx.fillStyle = "#38bdf8";
+        stars.forEach(s => {
+          s.x -= s.speed;
+          if (s.x < 0) s.x = 1280;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // Glowing Hologram Grid
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.25)";
+        ctx.lineWidth = 2;
+        const horizon = 460;
+        ctx.beginPath();
+        for (let x = 0; x <= 1280; x += 80) {
+          ctx.moveTo(x, 720);
+          ctx.lineTo(640 + (x - 640) * 0.1, horizon);
+        }
+        for (let y = horizon; y <= 720; y += 30) {
+          ctx.moveTo(0, y);
+          ctx.lineTo(1280, y);
+        }
+        ctx.stroke();
+
+        // 3D Planet
+        const planetGrad = ctx.createRadialGradient(640, 260, 20, 640, 260, 120);
+        planetGrad.addColorStop(0, "#38bdf8");
+        planetGrad.addColorStop(0.7, "#0284c7");
+        planetGrad.addColorStop(1, "#0f172a");
+        ctx.fillStyle = planetGrad;
+        ctx.beginPath();
+        ctx.arc(640, 260, 100, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Title
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 34px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("VR MOBILE SIDE CINEMA", 640, 120);
+        ctx.font = "18px sans-serif";
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillText("Real-Time Dual Viewport Duplication Test", 640, 160);
+      } else {
+        // Scene 1: Cyberpunk Neon City
+        const grad = ctx.createLinearGradient(0, 0, 0, 720);
+        grad.addColorStop(0, "#1e1b4b");
+        grad.addColorStop(1, "#020617");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 1280, 720);
+
+        // Neon Sun
+        const sunGrad = ctx.createRadialGradient(640, 360, 10, 640, 360, 160);
+        sunGrad.addColorStop(0, "#f43f5e");
+        sunGrad.addColorStop(1, "#881337");
+        ctx.fillStyle = sunGrad;
+        ctx.beginPath();
+        ctx.arc(640, 360, 140, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 32px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("CYBERPUNK IMAX SIMULATION", 640, 130);
+      }
+
+      // Timecode overlay
+      const sec = Math.floor(frame / 60);
+      const m = String(Math.floor(sec / 60)).padStart(2, "0");
+      const s = String(sec % 60).padStart(2, "0");
+      ctx.fillStyle = "rgba(15, 23, 42, 0.8)";
+      ctx.fillRect(30, 650, 140, 36);
+      ctx.fillStyle = "#38bdf8";
+      ctx.font = "bold 14px monospace";
+      ctx.textAlign = "left";
+      ctx.fillText(`⏱ REC ${m}:${s}`, 45, 674);
+
+      requestAnimationFrame(drawScene);
+    }
+
+    drawScene();
+
+    document.getElementById("btn-play-pause").onclick = () => {
+      isPlaying = !isPlaying;
+    };
+
+    document.getElementById("btn-change-scene").onclick = () => {
+      scene = (scene + 1) % 2;
+    };
+
+    document.getElementById("btn-fullscreen").onclick = () => {
+      if (!document.fullscreenElement) {
+        document.querySelector(".video-card").requestFullscreen().catch(console.warn);
+      } else {
+        document.exitFullscreen();
+      }
+    };
+
+    document.getElementById("btn-manual-toggle").onclick = () => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'v', altKey: true }));
+    };
+  </script>
+  <script src="content.js"></script>
+</body>
+</html>
