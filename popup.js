@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const checkCurved = /** @type {HTMLInputElement} */ (document.getElementById("check-curved"));
   const checkGyro = /** @type {HTMLInputElement} */ (document.getElementById("check-gyro"));
+  const checkNewTab = /** @type {HTMLInputElement|null} */ (document.getElementById("check-newtab"));
 
   const aspectChips = document.querySelectorAll(".aspect-chips .chip");
   const presetBtns = document.querySelectorAll(".btn-preset");
@@ -28,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentSettings = {
     enabled: false,
     mode: "fullweb",
+    openInNewTab: true,
     zoom: 1.0,
     ipd: 0,
     brightness: 100,
@@ -75,7 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
       statusBadge.classList.remove("active");
       statusText.textContent = "OFF";
       btnToggleVR.classList.remove("active");
-      btnToggleText.textContent = "Masuk Mode VR (SBS)";
+      btnToggleText.textContent = currentSettings.openInNewTab !== false ? "Buka Tab Baru (Mode VR)" : "Masuk Mode VR (SBS)";
+    }
+
+    // New Tab Checkbox
+    if (checkNewTab) {
+      checkNewTab.checked = currentSettings.openInNewTab !== false;
     }
 
     // Mode Selector
@@ -156,21 +163,45 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Event: New Tab Switch
+  if (checkNewTab) {
+    checkNewTab.addEventListener("change", (e) => {
+      const target = /** @type {HTMLInputElement} */ (e.target);
+      currentSettings.openInNewTab = target.checked;
+      updateUI();
+      chrome.storage.local.set({ vrSettings: currentSettings });
+    });
+  }
+
   // Event: Main Toggle Button
   if (btnToggleVR) {
     btnToggleVR.addEventListener("click", () => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (!tabs || !tabs[0] || !tabs[0].id) return;
-        const tabId = tabs[0].id;
+        const curTab = tabs[0];
 
-        chrome.tabs.sendMessage(tabId, { action: "VR_TOGGLE" }, (res) => {
+        // If NOT in VR currently and openInNewTab is enabled -> Open new tab
+        if (!currentSettings.enabled && currentSettings.openInNewTab !== false && curTab.url) {
+          chrome.runtime.sendMessage({
+            action: "VR_OPEN_NEW_TAB",
+            url: curTab.url,
+            index: curTab.index,
+            mode: currentSettings.mode
+          }, () => {
+            window.close();
+          });
+          return;
+        }
+
+        // Otherwise toggle in current tab
+        chrome.tabs.sendMessage(curTab.id, { action: "VR_TOGGLE" }, (res) => {
           if (chrome.runtime.lastError) {
             chrome.scripting.executeScript({
-              target: { tabId: tabId, allFrames: true },
+              target: { tabId: curTab.id, allFrames: true },
               files: ["content.js"]
             }).then(() => {
               setTimeout(() => {
-                chrome.tabs.sendMessage(tabId, { action: "VR_TOGGLE" }, (r) => {
+                chrome.tabs.sendMessage(curTab.id, { action: "VR_TOGGLE" }, (r) => {
                   if (r && typeof r.enabled !== "undefined") {
                     currentSettings.enabled = r.enabled;
                     updateUI();
@@ -329,6 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
       currentSettings = {
         enabled: currentSettings.enabled,
         mode: "fullweb",
+        openInNewTab: true,
         zoom: 1.0,
         ipd: 0,
         brightness: 100,

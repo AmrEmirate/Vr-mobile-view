@@ -25,9 +25,14 @@ declare namespace chrome {
       url?: string;
       title?: string;
       active?: boolean;
+      index?: number;
     }
     function query(queryInfo: { active?: boolean; currentWindow?: boolean; [key: string]: any }, callback?: (result: Tab[]) => void): Promise<Tab[]>;
+    function create(createProperties: { url?: string; active?: boolean; index?: number; [key: string]: any }, callback?: (tab: Tab) => void): Promise<Tab>;
     function sendMessage(tabId: number, message: any, callback?: (response: any) => void): Promise<any>;
+    const onUpdated: {
+      addListener(callback: (tabId: number, changeInfo: { status?: string; [key: string]: any }, tab: Tab) => void): void;
+    };
   }
   namespace scripting {
     function executeScript(injection: {
